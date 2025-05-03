@@ -1,9 +1,10 @@
 using KoishiServer.Common.Config;
+using KoishiServer.GameServer.Network;
 using Serilog;
 using System.Net;
 using System.Threading.Tasks;
 
-namespace KoishiServer.GameServer 
+namespace KoishiServer.GameServer
 {
     public static class Runner
     {
@@ -13,10 +14,12 @@ namespace KoishiServer.GameServer
 
             IPAddress ip = IPAddress.Parse(serverConfig.Host);
             ushort port = serverConfig.GameServerPort;
-
+            IPEndPoint endpoint = new IPEndPoint(ip, port);
             string socketAddr = $"{serverConfig.Host}:{port}";
+
             Log.Information("GameServer is listening on {Addr}.", socketAddr);
-            Task.Run(() => Log.Warning("GameServer is unimplemented."));
+            TcpServer server = new TcpServer();
+            server.Start(endpoint);
         }
     }
 }

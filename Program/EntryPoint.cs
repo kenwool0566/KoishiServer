@@ -7,7 +7,7 @@ namespace KoishiServer.Program
 {
     class EntryPoint
     {
-        static void Main()
+        static int Main()
         {
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Information()
@@ -34,6 +34,8 @@ namespace KoishiServer.Program
 
             httpThread.Start();
             gameThread.Start();
+
+            return 0;
         }
     }
 }
