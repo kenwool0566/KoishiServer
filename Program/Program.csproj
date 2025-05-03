@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\HttpServer\HttpServer.csproj" />
+    <ProjectReference Include="..\GameServer\GameServer.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Serilog" Version="4.2.0" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+	  <Content Include="..\Assets\Koishi.ico" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>KoishiServer.Program</RootNamespace>
+    <AssemblyName>KoishiServer</AssemblyName>
+    <ApplicationIcon>..\Assets\Koishi.ico</ApplicationIcon>
+  </PropertyGroup>
+
+</Project>

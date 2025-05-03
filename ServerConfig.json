@@ -1,0 +1,7 @@
+{
+    "Host": "127.0.0.1",
+    "HttpServerPort": 21000,
+    "GameServerPort": 23301,
+    "DispatchUrl": "http://127.0.0.1:21000/query_gateway",
+    "UseTcp": true
+}
