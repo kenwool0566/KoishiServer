@@ -1,53 +1,63 @@
+using Serilog;
 using System;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace KoishiServer.GameServer.Network
 {
     public class TcpServer
     {
-        private Socket? _listener;
+        private readonly IPEndPoint _endpoint;
 
-        public void Start(IPEndPoint endpoint)
+        public TcpServer(IPEndPoint endpoint)
         {
-            _listener = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            _listener.Bind(endpoint);
-            _listener.Listen(1);
-            AcceptLoop();
+            _endpoint = endpoint;
         }
 
-        private void AcceptLoop()
+        public async Task StartAsync()
         {
-            SocketAsyncEventArgs args = new SocketAsyncEventArgs();
-            args.Completed += (s, e) => ProcessAccept(e);
-            AcceptAsync(args);
-        }
+            TcpListener listener = new TcpListener(_endpoint);
+            listener.Start();
 
-        private void AcceptAsync(SocketAsyncEventArgs args)
-        {
-            args.AcceptSocket = null;
-
-            if (_listener == null)
+            try
             {
-                return;
+                while (true)
+                {
+                    TcpClient client = await listener.AcceptTcpClientAsync();
+                    _ = HandleClientAsync(client);
+                }
             }
 
-            if (!_listener.AcceptAsync(args)) ProcessAccept(args);
+            catch (Exception ex)
+            {
+                Log.Error("TcpListener loop stopped unexpectedly: {Exception}", ex);
+            }
         }
 
-        private void ProcessAccept(SocketAsyncEventArgs e)
+        private async Task HandleClientAsync(TcpClient client)
         {
-            Socket? socket = e.AcceptSocket;
+            using NetworkStream stream = client.GetStream();
 
-            if (socket == null)
+            try
             {
-                return;
+                Session session = new Session(stream);
+                while (true)
+                {
+                    Packet packet = await Packet.ReadAsync(stream);
+                    await Handler.HandlePacket(session, packet);
+                }
+            }
+            
+            catch (InvalidDataException ex)
+            {
+                Log.Error("Received Invalid Packet: {Exception}", ex);
             }
 
-            ClientConnection conn = new ClientConnection(socket);
-            AcceptAsync(e);
+            catch
+            {
+                Log.Information("Client Disconnected.");
+            }
         }
     }
 }

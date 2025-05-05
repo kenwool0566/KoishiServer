@@ -11,11 +11,11 @@ namespace KoishiServer.HttpServer
     // Credits: RobinSR's autohotfix for implementation reference and the proxy host
     public partial class DispatchHandler
     {
-        private static readonly string ProxyHost = "proxy1.neonteam.dev";
-        private static readonly string CNPRODHost = "prod-gf-cn-dp01.bhsr.com";
-        private static readonly string CNBETAHost = "beta-release01-cn.bhsr.com";
-        private static readonly string OSPRODHost = "prod-official-asia-dp01.starrails.com";
-        private static readonly string OSBETAHost = "beta-release01-asia.starrails.com";
+        private const string ProxyHost = "proxy1.neonteam.dev";
+        private const string CNPRODHost = "prod-gf-cn-dp01.bhsr.com";
+        private const string CNBETAHost = "beta-release01-cn.bhsr.com";
+        private const string OSPRODHost = "prod-official-asia-dp01.starrails.com";
+        private const string OSBETAHost = "beta-release01-asia.starrails.com";
 
         private static string SelectHost(string version)
         {

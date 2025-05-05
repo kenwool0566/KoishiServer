@@ -8,18 +8,29 @@ namespace KoishiServer.GameServer
 {
     public static class Runner
     {
-        public static void Start(ServerConfig serverConfig)
+        public static async Task Start(ServerConfig serverConfig)
         {
-            Log.Information("Starting GameServer.");
+            try
+            {
+                Handler.RegisterAll();
+                Log.Information("Starting GameServer.");
+                
+                IPAddress ip = IPAddress.Parse(serverConfig.Host);
+                ushort port = serverConfig.GameServerPort;
 
-            IPAddress ip = IPAddress.Parse(serverConfig.Host);
-            ushort port = serverConfig.GameServerPort;
-            IPEndPoint endpoint = new IPEndPoint(ip, port);
-            string socketAddr = $"{serverConfig.Host}:{port}";
+                IPEndPoint endpoint = new IPEndPoint(ip, port);
 
-            Log.Information("GameServer is listening on {Addr}.", socketAddr);
-            TcpServer server = new TcpServer();
-            server.Start(endpoint);
+                string socketAddr = $"{serverConfig.Host}:{port}";
+                Log.Information("GameServer is listening on {Addr}.", socketAddr);
+
+                TcpServer server = new TcpServer(endpoint);
+                await server.StartAsync();
+            }
+
+            catch (Exception ex)
+            {
+                Log.Fatal("GameServer terminated unexpectedly: {Exception}", ex);
+            }
         }
     }
 }

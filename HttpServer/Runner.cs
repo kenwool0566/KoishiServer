@@ -45,11 +45,6 @@ namespace KoishiServer.HttpServer
             {
                 Log.Fatal("HttpServer terminated unexpectedly: {Exception}", ex);
             }
-            
-            finally
-            {
-                Log.CloseAndFlush();
-            }
         }
     }
 }

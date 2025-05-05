@@ -38,7 +38,7 @@ namespace KoishiServer.Common.Config
 
     public static class HotfixConfigLoader
     {
-        private static readonly string HotfixConfigFilePath = "HotfixConfig.json";
+        private const string HotfixConfigFilePath = "HotfixConfig.json";
 
         public static HotfixConfig LoadConfig()
         {

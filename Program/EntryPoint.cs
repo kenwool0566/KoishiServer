@@ -7,7 +7,7 @@ namespace KoishiServer.Program
 {
     class EntryPoint
     {
-        static int Main()
+        static async Task Main()
         {
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Information()
@@ -29,12 +29,10 @@ namespace KoishiServer.Program
             ServerConfig serverConfig = ServerConfigLoader.LoadConfig();
             HotfixConfig hotfixConfig = HotfixConfigLoader.LoadConfig();
 
-            Thread httpThread = new Thread(() => KoishiServer.HttpServer.Runner.Start(serverConfig, hotfixConfig));
+            new Thread(() => KoishiServer.HttpServer.Runner.Start(serverConfig, hotfixConfig)).Start();
+            await KoishiServer.GameServer.Runner.Start(serverConfig);
             
-            httpThread.Start();
-            KoishiServer.GameServer.Runner.Start(serverConfig);
-            
-            return 0;
+            Log.CloseAndFlush();
         }
     }
 }

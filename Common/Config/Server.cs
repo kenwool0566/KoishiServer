@@ -25,7 +25,7 @@ namespace KoishiServer.Common.Config
 
     public static class ServerConfigLoader
     {
-        private static readonly string ServerConfigFilePath = "ServerConfig.json";
+        private const string ServerConfigFilePath = "ServerConfig.json";
 
         public static ServerConfig LoadConfig()
         {

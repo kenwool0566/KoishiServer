@@ -1,92 +1,85 @@
 using KoishiServer.Common.Resource.Proto;
 using KoishiServer.GameServer.Cmd;
 using Serilog;
+using System;
 using System.Threading.Tasks;
 
 namespace KoishiServer.GameServer.Network
 {
-    public partial class ClientConnection
+    public static class Handler
     {
-        private void HandlePacket(Packet packet)
+        private static readonly Dictionary<ushort, Func<Session, Packet, Task>> _handlers = new();
+
+        public static void RegisterAll()
         {
-            Task.Run(async () =>
+            Log.Information("Registering GameServer handlers.");
+
+            /** 
+                CmdAvatarType
+            **/
+            Register(CmdAvatarType.CmdGetAvatarDataCsReq, AvatarHandler.CmdGetAvatarDataCsReq);
+
+            /** 
+                CmdLineupType
+            **/
+            Register(CmdItemType.CmdGetBagCsReq, ItemHandler.CmdGetBagCsReq);
+
+            /** 
+                CmdLineupType
+            **/
+            Register(CmdLineupType.CmdGetAllLineupDataCsReq, LineupHandler.CmdGetAllLineupDataCsReq);
+            Register(CmdLineupType.CmdGetCurLineupDataCsReq, LineupHandler.CmdGetCurLineupDataCsReq);
+
+            /** 
+                CmdMissionType
+            **/
+            Register(CmdMissionType.CmdGetMissionStatusCsReq, MissionHandler.CmdGetMissionStatusCsReq);
+
+            /** 
+                CmdPlayerType
+            **/
+            Register(CmdPlayerType.CmdGetBasicInfoCsReq, PlayerHandler.CmdGetBasicInfoCsReq);
+            Register(CmdPlayerType.CmdGetMultiPathAvatarInfoCsReq, PlayerHandler.CmdGetMultiPathAvatarInfoCsReq);
+            Register(CmdPlayerType.CmdPlayerGetTokenCsReq, PlayerHandler.CmdPlayerGetTokenCsReq);
+            Register(CmdPlayerType.CmdPlayerHeartBeatCsReq, PlayerHandler.CmdPlayerHeartBeatCsReq);
+            Register(CmdPlayerType.CmdPlayerLoginCsReq, PlayerHandler.CmdPlayerLoginCsReq);
+            Register(CmdPlayerType.CmdPlayerLoginFinishCsReq, PlayerHandler.CmdPlayerLoginFinishCsReq);
+
+            /** 
+                CmdSceneType
+            **/
+            Register(CmdSceneType.CmdGetCurSceneInfoCsReq, SceneHandler.CmdGetCurSceneInfoCsReq);
+            Register(CmdSceneType.CmdGetSceneMapInfoCsReq, SceneHandler.CmdGetSceneMapInfoCsReq);
+            Register(CmdSceneType.CmdSceneCastSkillCostMpCsReq, SceneHandler.CmdSceneCastSkillCostMpCsReq);
+            Register(CmdSceneType.CmdSceneEntityMoveCsReq, SceneHandler.CmdSceneEntityMoveCsReq);
+
+            Log.Information("Registered {Count} GameServer handlers.", _handlers.Count);
+        }
+
+        private static void Register<T>(T commandType, Func<Session, Packet, Task> HandleFn) 
+            where T : Enum
+        {
+            _handlers[Convert.ToUInt16(commandType)] = HandleFn;
+        }
+
+        public static async Task HandlePacket(Session session, Packet packet)
+        {
+            Log.Information("Got Cmd: {CmdId}", packet.CommandId);
+            if (_handlers.TryGetValue(packet.CommandId, out Func<Session, Packet, Task>? HandleFn))
             {
-                Log.Information("Received Cmd: {CmdId}", packet.CommandId);
                 try
                 {
-                    switch (packet.CommandId)
-                    {
-                        // =============== AVATAR =============== 
-                        case (ushort)CmdAvatarType.CmdGetAvatarDataCsReq:
-                            await AvatarHandler.HandleGetAvatarData(SendPacket, packet);
-                            break;
-
-                        // =============== ITEM =============== 
-                        case (ushort)CmdItemType.CmdGetBagCsReq:
-                            await ItemHandler.HandleGetBag(SendPacket, packet);
-                            break;
-
-                        // =============== LINEUP =============== 
-                        case (ushort)CmdLineupType.CmdGetAllLineupDataCsReq:
-                            await LineupHandler.HandleGetAllLineupData(SendPacket, packet);
-                            break;
-
-                        case (ushort)CmdLineupType.CmdGetCurLineupDataCsReq:
-                            await LineupHandler.HandleGetCurLineupData(SendPacket, packet);
-                            break;
-
-                        // =============== MISSION =============== 
-                        case (ushort)CmdMissionType.CmdGetMissionStatusCsReq:
-                            await MissionHandler.HandleGetMissionStatus(SendPacket, packet);
-                            break;
-
-                        // =============== PLAYER =============== 
-                        case (ushort)CmdPlayerType.CmdGetBasicInfoCsReq:
-                            await PlayerHandler.HandleGetBasicInfo(SendPacket, packet);
-                            break;
-
-                        case (ushort)CmdPlayerType.CmdGetMultiPathAvatarInfoCsReq:
-                            await PlayerHandler.HandleGetMultiPathAvatarInfo(SendPacket, packet);
-                            break;
-
-                        case (ushort)CmdPlayerType.CmdPlayerGetTokenCsReq:
-                            await PlayerHandler.HandlePlayerGetToken(SendPacket, packet);
-                            break;
-
-                        case (ushort)CmdPlayerType.CmdPlayerHeartBeatCsReq:
-                            await PlayerHandler.HandlePlayerHeartBeat(SendPacket, packet);
-                            break;
-
-                        case (ushort)CmdPlayerType.CmdPlayerLoginFinishCsReq:
-                            await PlayerHandler.HandlePlayerLoginFinish(SendPacket, packet);
-                            break;
-
-                        case (ushort)CmdPlayerType.CmdPlayerLoginCsReq:
-                            await PlayerHandler.HandlePlayerLogin(SendPacket, packet);
-                            break;
-
-                        // =============== SCENE =============== 
-                        case (ushort)CmdSceneType.CmdGetCurSceneInfoCsReq:
-                            await SceneHandler.HandleGetCurSceneInfo(SendPacket, packet);
-                            break;
-                        case (ushort)CmdSceneType.CmdGetSceneMapInfoCsReq:
-                            await SceneHandler.HandleGetSceneMapInfo(SendPacket, packet);
-                            break;
-                        case (ushort)CmdSceneType.CmdSceneEntityMoveCsReq:
-                            await SceneHandler.HandleSceneEntityMove(SendPacket, packet);
-                            break;
-
-                        // =============== DEFAULT =============== 
-                        default:
-                            Log.Warning("Unhandled Cmd: {CmdId}", packet.CommandId);
-                            break;
-                    }
+                    await HandleFn(session, packet);
                 }
                 catch (Exception ex)
                 {
                     Log.Error("{Exception}", ex);
                 }
-            });
+            }
+            else
+            {
+                Log.Warning("Unhandled Cmd: {CmdId}", packet.CommandId);
+            }
         }
     }
 }

@@ -30,6 +30,11 @@ dotnet run --project Program
 
 [FireflySR.Tool.Proxy](https://git.xeondev.com/YYHEggEgg/FireflySR.Tool.Proxy/archive/v2.0.0.zip)
 
+## [⚠️] Known Issues
+- It's just a walking simulator.
+- Player gets stuck for a bit on scene enter.
+- Hardcode hell.
+
 ## [🙏] Acknowledgements
 
 Anders Hejlsberg, Scott Wiltamuth, and Peter Golde for inventing C#
