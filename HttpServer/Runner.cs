@@ -17,6 +17,7 @@ namespace KoishiServer.HttpServer
 
                 WebApplicationBuilder builder = WebApplication.CreateBuilder();
                 builder.Logging.ClearProviders();
+                builder.Services.AddHttpClient();
                 builder.Services.AddSingleton(serverConfig);
                 builder.Services.AddSingleton(hotfixConfig);
                 builder.Services.AddRouting();

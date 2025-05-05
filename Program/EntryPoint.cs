@@ -30,11 +30,10 @@ namespace KoishiServer.Program
             HotfixConfig hotfixConfig = HotfixConfigLoader.LoadConfig();
 
             Thread httpThread = new Thread(() => KoishiServer.HttpServer.Runner.Start(serverConfig, hotfixConfig));
-            Thread gameThread = new Thread(() => KoishiServer.GameServer.Runner.Start(serverConfig));
-
+            
             httpThread.Start();
-            gameThread.Start();
-
+            KoishiServer.GameServer.Runner.Start(serverConfig);
+            
             return 0;
         }
     }

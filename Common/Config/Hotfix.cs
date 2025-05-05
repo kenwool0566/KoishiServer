@@ -1,4 +1,8 @@
 using Newtonsoft.Json;
+using Serilog;
+using System;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace KoishiServer.Common.Config
 {
@@ -38,7 +42,28 @@ namespace KoishiServer.Common.Config
 
         public static HotfixConfig LoadConfig()
         {
-            return ConfigLoader.LoadConfig<HotfixConfig>(HotfixConfigFilePath);
+            return ConfigLoader.FromFile<HotfixConfig>(HotfixConfigFilePath);
+        }
+
+        public static async Task InsertHotfixDataAsync(string version, HotfixData newData)
+        {
+            try
+            {
+                string json = await File.ReadAllTextAsync(HotfixConfigFilePath);
+                HotfixConfig? result = JsonConvert.DeserializeObject<HotfixConfig>(json);
+
+                if (result == null) throw new InvalidDataException($"Failed to deserialize {HotfixConfigFilePath}.");
+
+                result.HotfixData[version] = newData;
+
+                string updatedJson = JsonConvert.SerializeObject(result, Formatting.Indented);
+                await File.WriteAllTextAsync(HotfixConfigFilePath, updatedJson);
+            }
+
+            catch (Exception ex)
+            {
+                Log.Error("Failed inserting HotfixData to {File}: {Exception}", HotfixConfigFilePath, ex);
+            }
         }
     }
 }

@@ -18,6 +18,9 @@ namespace KoishiServer.Common.Config
 
         [JsonProperty("UseTcp")]
         public bool UseTcp { get; set; } = true;
+
+        [JsonProperty("EnableAutoHotfix")]
+        public bool EnableAutoHotfix { get; set; } = false;
     }
 
     public static class ServerConfigLoader
@@ -26,7 +29,7 @@ namespace KoishiServer.Common.Config
 
         public static ServerConfig LoadConfig()
         {
-            return ConfigLoader.LoadConfig<ServerConfig>(ServerConfigFilePath);
+            return ConfigLoader.FromFile<ServerConfig>(ServerConfigFilePath);
         }
     }
 }

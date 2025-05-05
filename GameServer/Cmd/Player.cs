@@ -11,7 +11,11 @@ namespace KoishiServer.GameServer.Cmd
         public static async Task HandleGetBasicInfo(Func<Packet, Task> SendPacket, Packet inPacket)
         {
             ushort rspCmd = (ushort)CmdPlayerType.CmdGetBasicInfoScRsp;
-            GetBasicInfoScRsp rsp = new GetBasicInfoScRsp();
+            GetBasicInfoScRsp rsp = new GetBasicInfoScRsp
+            {
+                IsGenderSet = true,
+                Gender = (uint)Gender.Man,
+            };
             Packet outPacket = Packet.Headless(rspCmd, rsp.ToByteArray());
             await SendPacket(outPacket);
         }
@@ -19,7 +23,16 @@ namespace KoishiServer.GameServer.Cmd
         public static async Task HandleGetMultiPathAvatarInfo(Func<Packet, Task> SendPacket, Packet inPacket)
         {
             ushort rspCmd = (ushort)CmdPlayerType.CmdGetMultiPathAvatarInfoScRsp;
+
+            uint marchId = 1001;
+            MultiPathAvatarType marchType = MultiPathAvatarType.Mar7ThKnightType;
+            uint trailblazerId = 8001;
+            MultiPathAvatarType trailblazerType = MultiPathAvatarType.BoyMemoryType;
+
             GetMultiPathAvatarInfoScRsp rsp = new GetMultiPathAvatarInfoScRsp();
+            rsp.CurAvatarPath.Add(marchId, marchType);
+            rsp.CurAvatarPath.Add(trailblazerId, trailblazerType);
+
             Packet outPacket = Packet.Headless(rspCmd, rsp.ToByteArray());
             await SendPacket(outPacket);
         }

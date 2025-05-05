@@ -75,8 +75,8 @@ namespace KoishiServer.GameServer.Cmd
             List<SceneMapInfo> mapInfos = req.FloorIdList
                 .Select(floorId => new SceneMapInfo
                 {
-                    EntryId = floorId,
-                    CurMapEntryId = floorId,
+                    EntryId = (floorId - 1) / 1000,
+                    CurMapEntryId = (floorId + 9) / 10,
                     FloorId = floorId,
                 })
                 .ToList();
@@ -91,6 +91,21 @@ namespace KoishiServer.GameServer.Cmd
 
             Packet outPacket = Packet.Headless(rspCmd, rsp.ToByteArray());
             await SendPacket(outPacket);
+        }
+
+        public static async Task HandleSceneEntityMove(Func<Packet, Task> SendPacket, Packet inPacket)
+        {
+            ushort rspCmd = (ushort)CmdSceneType.CmdSceneEntityMoveScRsp;
+
+            // SceneEntityMoveCsReq req;
+            // try { req = SceneEntityMoveCsReq.Parser.ParseFrom(inPacket.BodyData); }
+            // catch { req = new SceneEntityMoveCsReq(); }
+
+            SceneEntityMoveScRsp rsp = new SceneEntityMoveScRsp();
+            // rsp.EntityMotionList.AddRange(req.EntityMotionList);
+
+            Packet outPacket = Packet.Headless(rspCmd, rsp.ToByteArray());
+            await SendPacket(outPacket);      
         }
     }
 }

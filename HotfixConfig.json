@@ -1,20 +1,12 @@
 {
-    "HotfixData": {
-        "*": {
-            "LuaUrl": "",
-            "AssetBundleUrl": "",
-            "ExResourceUrl": "",
-            "IFixUrl": "",
-            "IFixVersion": "0",
-            "MdkResVersion": ""
-        },
-        "OSPRODWin3.2.0": {
-            "LuaUrl": "",
-            "AssetBundleUrl": "",
-            "ExResourceUrl": "",
-            "IFixUrl": "",
-            "IFixVersion": "0",
-            "MdkResVersion": ""     
-        }
+  "HotfixData": {
+    "*": {
+      "LuaUrl": "",
+      "AssetBundleUrl": "",
+      "ExResourceUrl": "",
+      "IFixUrl": "",
+      "IFixVersion": "0",
+      "MdkResVersion": ""
     }
+  }
 }

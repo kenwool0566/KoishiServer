@@ -72,6 +72,9 @@ namespace KoishiServer.GameServer.Network
                         case (ushort)CmdSceneType.CmdGetSceneMapInfoCsReq:
                             await SceneHandler.HandleGetSceneMapInfo(SendPacket, packet);
                             break;
+                        case (ushort)CmdSceneType.CmdSceneEntityMoveCsReq:
+                            await SceneHandler.HandleSceneEntityMove(SendPacket, packet);
+                            break;
 
                         // =============== DEFAULT =============== 
                         default:

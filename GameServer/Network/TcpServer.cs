@@ -14,7 +14,7 @@ namespace KoishiServer.GameServer.Network
         {
             _listener = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             _listener.Bind(endpoint);
-            _listener.Listen(100);
+            _listener.Listen(1);
             AcceptLoop();
         }
 

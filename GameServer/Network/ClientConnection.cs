@@ -19,7 +19,7 @@ namespace KoishiServer.GameServer.Network
         public ClientConnection(Socket socket)
         {
             _socket = socket;
-            _buffer = ArrayPool<byte>.Shared.Rent(4096);
+            _buffer = ArrayPool<byte>.Shared.Rent(2048);
             _receiveArgs = new SocketAsyncEventArgs();
             _receiveArgs.SetBuffer(_buffer, 0, _buffer.Length);
             _receiveArgs.Completed += ReceiveCompleted;
