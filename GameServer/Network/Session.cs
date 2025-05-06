@@ -6,23 +6,15 @@ using System.Threading.Tasks;
 
 namespace KoishiServer.GameServer.Network
 {
-    // TODO: add lineup manager
-    public class Session
+    public partial class Session
     {
         private readonly NetworkStream _stream;
         public SRToolData? SRToolsData;
+        public Persistent? Persistent;
 
         public Session(NetworkStream stream)
         {
             _stream = stream;
-        }
-
-        public async Task<bool> LoadSRTools()
-        {
-            string filePath = SRToolData.SRToolsConfigFilePath;
-            bool fileHasChanged = ConfigLoader.HasFileChanged(filePath);
-            if (fileHasChanged) SRToolsData = await ConfigLoader.FromFileAsync<SRToolData>(filePath);
-            return fileHasChanged;
         }
 
         public async Task Send<C, M>(C commandType, M message)
@@ -34,6 +26,26 @@ namespace KoishiServer.GameServer.Network
             Packet packet = Packet.Headless(commandId, body);
             byte[] data = packet.ToByteArray();
             await _stream.WriteAsync(data, 0, data.Length);
+        }
+    }
+
+    public partial class Session
+    {
+        public async Task<bool> LoadSRTools()
+        {
+            bool fileHasChanged = SRToolsConfigLoader.HasFileChanged();
+            if (fileHasChanged) SRToolsData = await SRToolsConfigLoader.LoadConfigAsync();
+            return fileHasChanged;
+        }
+
+        public async Task LoadPersistent()
+        {
+            Persistent = await PersistentLoader.LoadConfigAsync();
+        }
+        
+        public async Task SavePersistent()
+        {
+            if (Persistent != null) await PersistentLoader.SaveToFileAsync(Persistent);
         }
     }
 }

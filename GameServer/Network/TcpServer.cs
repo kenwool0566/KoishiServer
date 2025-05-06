@@ -38,10 +38,10 @@ namespace KoishiServer.GameServer.Network
         private async Task HandleClientAsync(TcpClient client)
         {
             using NetworkStream stream = client.GetStream();
+            Session session = new Session(stream);
 
             try
             {
-                Session session = new Session(stream);
                 while (true)
                 {
                     Packet packet = await Packet.ReadAsync(stream);
@@ -57,6 +57,7 @@ namespace KoishiServer.GameServer.Network
             catch
             {
                 Log.Information("Client Disconnected.");
+                await session.SavePersistent();
             }
         }
     }

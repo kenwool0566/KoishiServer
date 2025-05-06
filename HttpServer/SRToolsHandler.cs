@@ -51,7 +51,7 @@ namespace KoishiServer.HttpServer
                     return;
                 }
 
-                await ConfigLoader.SaveToFileAsync(SRToolData.SRToolsConfigFilePath, req.Data);
+                await SRToolsConfigLoader.SaveToFileAsync(req.Data);
                 await context.Response.WriteAsJsonAsync(CreateRsp(200, "OK"));
             }
             

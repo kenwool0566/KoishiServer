@@ -9,6 +9,9 @@ namespace KoishiServer.GameServer.Cmd
     {
         public static async Task CmdPlayerLoginCsReq(Session session, Packet packet)
         {
+            await session.LoadSRTools();
+            await session.LoadPersistent();
+
             PlayerLoginScRsp rsp = new PlayerLoginScRsp
             {
                 BasicInfo = new PlayerBasicInfo

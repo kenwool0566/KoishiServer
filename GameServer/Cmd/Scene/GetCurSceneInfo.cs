@@ -1,3 +1,4 @@
+using KoishiServer.Common.Config;
 using KoishiServer.Common.Resource.Proto;
 using KoishiServer.GameServer.Network;
 using System.Threading.Tasks;
@@ -8,23 +9,36 @@ namespace KoishiServer.GameServer.Cmd
     {
         public static async Task CmdGetCurSceneInfoCsReq(Session session, Packet packet)
         {
+            Persistent persistent = session.Persistent!;
+
+            uint leaderAvatarId = persistent.Lineup
+                .Select(x => x.Value)
+                .Where(v => v != null && v.Leader)
+                .Select(v => v!.Id)
+                .FirstOrDefault();
+
             SceneEntityInfo playerEntity = new SceneEntityInfo
             {
                 Motion = new MotionInfo
                 {
                     Pos = new Vector
                     {
-                        X = -550,
-                        Y = 19364,
-                        Z = 4480,
+                        X = persistent.Position.X,
+                        Y = persistent.Position.Y,
+                        Z = persistent.Position.Z,
                     },
-                    Rot = new Vector(),
+                    Rot = new Vector
+                    {
+                        X = persistent.Rotation.X,
+                        Y = persistent.Rotation.Y,
+                        Z = persistent.Rotation.Z,
+                    },
                 },
                 Actor = new SceneActorInfo
                 {
                     AvatarType = AvatarType.AvatarFormalType,
-                    BaseAvatarId = 1221,
-                    MapLayer = 2,
+                    BaseAvatarId = leaderAvatarId,
+                    MapLayer = persistent.MapLayer,
                     Uid = 1,
                 },
             };
@@ -35,16 +49,18 @@ namespace KoishiServer.GameServer.Cmd
                 EntityList = { playerEntity },
             };
 
+            SceneInfo scene = new SceneInfo
+            {
+                PlaneId = persistent.Scene.PlaneId,
+                FloorId = persistent.Scene.FloorId,
+                EntryId = persistent.Scene.EntryId,
+                GameModeType = 2,
+                EntityGroupList = { entityGroup },
+            };
+
             GetCurSceneInfoScRsp rsp = new GetCurSceneInfoScRsp
             {
-                Scene = new SceneInfo
-                {
-                    PlaneId = 20101,
-                    EntryId = 20101 * 100 + 1,
-                    FloorId = 20101 * 1000 + 1,
-                    GameModeType = 2,
-                    EntityGroupList = { entityGroup },
-                },
+                Scene = scene
             };
 
             await session.Send(CmdSceneType.CmdGetCurSceneInfoScRsp, rsp);

@@ -4,20 +4,28 @@ using System.Threading.Tasks;
 
 namespace KoishiServer.Common.Config
 {
+    public class SRToolsConfigLoader
+    {
+        private const string SRToolsConfigFilePath = "freesr-data.json";
+
+        public static async Task<SRToolData> LoadConfigAsync()
+        {
+            return await ConfigLoader.FromFileAsync<SRToolData>(SRToolsConfigFilePath);
+        }
+
+        public static bool HasFileChanged()
+        {
+            return ConfigLoader.HasFileChanged(SRToolsConfigFilePath);
+        }
+
+        public static async Task SaveToFileAsync(SRToolData newData)
+        {
+            await ConfigLoader.SaveToFileAsync(SRToolsConfigFilePath, newData);
+        }
+    }
+
     public class SRToolData
     {
-        public const string SRToolsConfigFilePath = "freesr-data.json";
-
-        public static async Task<SRToolData?> LoadIfChanged()
-        {
-            if (ConfigLoader.HasFileChanged(SRToolsConfigFilePath))
-            {
-                return await ConfigLoader.FromFileAsync<SRToolData>(SRToolsConfigFilePath);
-            }
-
-            return null;
-        }
-        
         public class RelicSubAffixData
         {
             [JsonProperty("sub_affix_id")]

@@ -57,3 +57,4 @@ nunit-*.xml
 *.proto
 _backup/
 freesr-data.json
+Persistent.json
