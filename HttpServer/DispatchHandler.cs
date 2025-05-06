@@ -14,7 +14,7 @@ namespace KoishiServer.HttpServer
     {
         public static void MapDispatchRoutes(WebApplication app)
         {
-            app.Map("/query_dispatch", HandleQueryDispatch);
+            app.MapGet("/query_dispatch", HandleQueryDispatch);
             app.Map("/query_gateway", HandleQueryGateway);
         }
 
@@ -48,6 +48,13 @@ namespace KoishiServer.HttpServer
         {
             if (context.Request.Method == HttpMethods.Head)
             {
+                await context.Response.CompleteAsync();
+                return;
+            }
+
+            else if (context.Request.Method != HttpMethods.Get)
+            {
+                context.Response.StatusCode = 405;
                 await context.Response.CompleteAsync();
                 return;
             }

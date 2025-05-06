@@ -34,6 +34,7 @@ namespace KoishiServer.HttpServer
 
                 AuthHandler.MapAuthRoutes(app);
                 DispatchHandler.MapDispatchRoutes(app);
+                SRToolsHandler.MapSRToolsRoutes(app);
 
                 string socketAddr = $"{serverConfig.Host}:{serverConfig.HttpServerPort}";
                 string url = $"http://{socketAddr}";

@@ -56,3 +56,4 @@ nunit-*.xml
 *.py
 *.proto
 _backup/
+freesr-data.json

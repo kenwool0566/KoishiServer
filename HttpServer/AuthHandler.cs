@@ -8,10 +8,10 @@ namespace KoishiServer.HttpServer
     {
         public static void MapAuthRoutes(WebApplication app)
         {
-            app.Map("/{game_biz}/mdk/shield/api/login", HandleMdkShieldApi);
-            app.Map("/{game_biz}/mdk/shield/api/verify", HandleMdkShieldApi);
-            app.Map("/{game_biz}/combo/granter/login/v2/login", HandleComboGranterLogin);
-            app.Map("/account/risky/api/check", HandleRiskyCheck);
+            app.MapPost("/{game_biz}/mdk/shield/api/login", HandleMdkShieldApi);
+            app.MapPost("/{game_biz}/mdk/shield/api/verify", HandleMdkShieldApi);
+            app.MapPost("/{game_biz}/combo/granter/login/v2/login", HandleComboGranterLogin);
+            app.MapPost("/account/risky/api/check", HandleRiskyCheck);
         }
 
         private static async Task HandleRiskyCheck(HttpContext context)
