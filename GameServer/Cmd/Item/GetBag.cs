@@ -8,7 +8,16 @@ namespace KoishiServer.GameServer.Cmd
     {
         public static async Task CmdGetBagCsReq(Session session, Packet packet)
         {
-            await session.Send(CmdItemType.CmdGetBagScRsp, new GetBagScRsp());
+            GetBagScRsp rsp = new GetBagScRsp
+            {
+                MaterialList = {
+                    new Material { Tid = 101, Num = 9999 },
+                    new Material { Tid = 102, Num = 9999 },
+                    new Material { Tid = 400006, Num = 100 },
+                },
+            };
+
+            await session.Send(CmdItemType.CmdGetBagScRsp, rsp);
         }
     }
 }

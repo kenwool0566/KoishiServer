@@ -11,12 +11,6 @@ namespace KoishiServer.GameServer.Cmd
         {
             Persistent persistent = session.Persistent!;
 
-            uint leaderAvatarId = persistent.Lineup
-                .Select(x => x.Value)
-                .Where(v => v != null && v.Leader)
-                .Select(v => v!.Id)
-                .FirstOrDefault();
-
             SceneEntityInfo playerEntity = new SceneEntityInfo
             {
                 Motion = new MotionInfo
@@ -37,7 +31,7 @@ namespace KoishiServer.GameServer.Cmd
                 Actor = new SceneActorInfo
                 {
                     AvatarType = AvatarType.AvatarFormalType,
-                    BaseAvatarId = leaderAvatarId,
+                    BaseAvatarId = persistent.GetLineupLeader(),
                     MapLayer = persistent.MapLayer,
                     Uid = 1,
                 },

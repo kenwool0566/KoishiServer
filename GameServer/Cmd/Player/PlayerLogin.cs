@@ -12,8 +12,13 @@ namespace KoishiServer.GameServer.Cmd
             await session.LoadSRTools();
             await session.LoadPersistent();
 
+            PlayerLoginCsReq req;
+            try { req = PlayerLoginCsReq.Parser.ParseFrom(packet.BodyData); }
+            catch { req = new PlayerLoginCsReq(); }
+
             PlayerLoginScRsp rsp = new PlayerLoginScRsp
             {
+                LoginRandom = req.LoginRandom,
                 BasicInfo = new PlayerBasicInfo
                 {
                     Nickname = "Koishi",

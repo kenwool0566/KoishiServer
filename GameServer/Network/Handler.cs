@@ -27,8 +27,10 @@ namespace KoishiServer.GameServer.Network
             /** 
                 CmdLineupType
             **/
+            Register(CmdLineupType.CmdChangeLineupLeaderCsReq, LineupHandler.CmdChangeLineupLeaderCsReq);
             Register(CmdLineupType.CmdGetAllLineupDataCsReq, LineupHandler.CmdGetAllLineupDataCsReq);
             Register(CmdLineupType.CmdGetCurLineupDataCsReq, LineupHandler.CmdGetCurLineupDataCsReq);
+            Register(CmdLineupType.CmdQuitLineupCsReq, LineupHandler.CmdQuitLineupCsReq);
 
             /** 
                 CmdMissionType

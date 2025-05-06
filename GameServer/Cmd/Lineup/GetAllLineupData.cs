@@ -9,38 +9,46 @@ namespace KoishiServer.GameServer.Cmd
     {
         public static async Task CmdGetAllLineupDataCsReq(Session session, Packet packet)
         {
+            List<LineupAvatar> lineupAvatars = session.Persistent!.Lineup
+                .Where(kvp => kvp.Value != null)
+                .Select(kvp => CreateLineupAvatar(kvp.Key, kvp.Value!.Id))
+                .ToList();
+
             GetAllLineupDataScRsp rsp = new GetAllLineupDataScRsp
             {
-                LineupList = { YunliOnly() },
+                LineupList = { CreateLineupInfo(lineupAvatars) },
             };
 
             await session.Send(CmdLineupType.CmdGetAllLineupDataScRsp, rsp);
         }
 
-        private static LineupInfo YunliOnly()
+        private static LineupInfo CreateLineupInfo(List<LineupAvatar> lineupAvatars)
         {
-            LineupAvatar lineupAvatar = new LineupAvatar
+            return new LineupInfo
             {
-                Id = 1221,
+                ExtraLineupType = ExtraLineupType.LineupNone,
+                Name = "KoishiTeam",
+                Mp = 5,
+                MaxMp = 5,
+                AvatarList = { lineupAvatars },
+            };
+        }
+
+        private static LineupAvatar CreateLineupAvatar(uint slot, uint avatarId)
+        {
+            return new LineupAvatar
+            {
+                Id = avatarId,
                 Hp = 10000,
+                Satiety = 100,
                 AvatarType = AvatarType.AvatarFormalType,
                 SpBar = new SpBarInfo
                 {
                     CurSp = 10000,
                     MaxSp = 10000,
                 },
+                Slot = slot,
             };
-
-            LineupInfo lineupInfo = new LineupInfo
-            {
-                Name = "KoishiTeam",
-                AvatarList = { lineupAvatar },
-                Mp = 5,
-                MaxMp = 5,
-                PlaneId = 20101,
-            };
-
-            return lineupInfo;
         }
     }
 }

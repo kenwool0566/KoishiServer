@@ -8,15 +8,11 @@ namespace KoishiServer.GameServer.Cmd
     {
         public static async Task CmdGetBasicInfoCsReq(Session session, Packet packet)
         {
-            Gender mcGender;
-
-            if (session.Persistent!.Trailblazer.Gender == "Girl") mcGender = Gender.Woman;
-            else mcGender = Gender.Man;
-
             GetBasicInfoScRsp rsp = new GetBasicInfoScRsp
             {
+                PlayerSettingInfo = new PlayerSettingInfo(),
                 IsGenderSet = true,
-                Gender = (uint)mcGender,
+                Gender = (uint)session.Persistent!.GetTrailblazerGender(),
             };
 
             await session.Send(CmdPlayerType.CmdGetBasicInfoScRsp, rsp);
